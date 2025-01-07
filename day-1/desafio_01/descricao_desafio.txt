@@ -1,0 +1,3 @@
+criar um cluster nginx. Depois criar um arquivo .yaml para criar um cluster com kind com 1 nó controlplane e 3 worker, nome do arquivo será primeirocluster.yaml
+
+
