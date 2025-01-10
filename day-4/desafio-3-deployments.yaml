@@ -1,0 +1,184 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx-deployment
+  name: nginx-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx-deployment
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: nginx-deployment
+    spec:
+      containers:
+      - image: nginx:1.19.2
+        name: nginx
+        resources:
+          limits:
+            cpu: "0.5"
+            memory: 256Mi
+          requests:
+            cpu: 0.25
+            memory: 128Mi
+        livenessProbe:
+          exec:
+            command:
+              - curl
+              - -f
+              - http://localhost:80/
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        startupProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: redis-deployment
+  name: redis-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: redis-deployment
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: redis-deployment
+    spec:
+      containers:
+      - image: redis:6.2.5
+        name: redis
+        resources:
+          limits:
+            cpu: "0.5"
+            memory: 256Mi
+          requests:
+            cpu: 0.25
+            memory: 128Mi
+        livenessProbe:
+          exec:
+            command:
+              - redis-cli
+              - ping
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+              - redis-cli
+              - ping
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        startupProbe:
+          exec:
+            command:
+              - redis-cli
+              - ping
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: postgres-deployment
+  name: postgres-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: postgres-deployment
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: postgres-deployment
+    spec:
+      containers:
+      - image: postgres:13.3
+        name: postgres
+        resources:
+          limits:
+            cpu: "0.5"
+            memory: 256Mi
+          requests:
+            cpu: 0.25
+            memory: 128Mi
+        livenessProbe:
+          exec:
+            command:
+              - pg_isready
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+              - pg_isready
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        startupProbe:
+          exec:
+            command:
+              - pg_isready
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
